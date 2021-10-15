@@ -1,0 +1,62 @@
+#
+# [file:#lines]
+# desc
+#
+
+[http.c:120]
+The 'value' variable can be overflowed since the contents of the Socket are written into 'buf' which has a size of 8192 bytes
+. Even though 'buf' is written to with a safe function, a portion of its content are then written into 'value', which has a 
+significantly smaller size of 512 bytes, with the function 'url_decode', which does not take in a parameter for maximum copy 
+bytes. Therefore if the substring of 'buf' is larger than 'value', the buffer will overflow. The HTTP request would have to 
+contain a header key value pair where the value was longer than 512 bytes long. This exploit is preventable with a canary 
+since the only significant data structure that could be changed, 'envvar', is set after the exploit in 'value'.
+
+120    char value[512];
+        ...
+159    url_decode(value, sp);
+
+[http.c:121]
+The 'envvar' variable can be overflowed because of the use of the unsafe function 'sprintf'. This function does not take in 
+a parameter for maximum string length, and since the 'buf' variable is being copied into 'envvar' with an additional 
+substring, if the name of the header key is larger than 512 bytes minus the length of the substring, then 'envarr' will 
+overflow. This exploit is preventable with a canary since there are no significant data structures that can be overwritten.
+
+121    char envvar[512];
+        ...
+165    sprintf(envvar, "HTTP_%s", buf);
+
+[http.c:276]
+The 'pn' variable can be overflowed because of the use of the unsafe function 'strcat'. This function continues to fill the 
+destination until the source is completed. Here, 'pn' will already have contents because it contains the current working 
+directory, and the name of the provided URI, of unknown length, will be appended to it serving as a vulnerability. If the 
+combination of the the working directory and the URI name are larger than 1024 bytes, the buffer will overflow. This attack
+ is not necessarily preventable with a canary since the 'handler' variable can be overwritten, leading to unwanted actions.
+
+276    char pn[1024];
+        ...
+282    strcat(pn, name);
+
+[http.c:353]
+The 'name' variable can be overflowed because of the use of the 'dir_join' function which is initialized in the code. This 
+function uses two functions, 'strcpy' and 'strcat', neither of which take in maximum buffer bounds for which to copy over. 
+This means that if the provided directory has a length larger than 1024 bytes minus the length of the indices string being 
+joined, then the buffer will overflow on line 358. Even if there is not a buffer overflow here, there is potential for the 
+code to overflow on line 360 if the environment path is larger than 1024 bytes minus the length of the indices string being 
+joined. This exploit is preventable with a canary since there are no significant data structures to overwrite.
+
+353    char name[1024];
+        ...
+358    dir_join(name, pn, indices[i]);
+        ...
+360    dir_join(name, getenv("SCRIPT_NAME"), indices[i]);
+
+[zookd.c:65]
+The 'reqpath' variable can be overflowed because of the use of the created function 'http_request_line'. In this function, 
+the variable 'reqpath' is set to the request URI, however this is done with an unsafe function 'sprintf' that does not take 
+in bounds for the maximum copy length. Therefore, if even if the 'env' variable in the function isnt overflowed, if the 
+requested URI is longer than 2048 bytes minus the 'REQUEST_URI=' prepend, 'reqpath' will overflow. This attack is preventable
+ with a canary since there are no other significant variables which can be overwritten.
+
+65      char reqpath[2048];
+                ...
+70      if ((errmsg = http_request_line(fd, reqpath, env, &env_len)))
