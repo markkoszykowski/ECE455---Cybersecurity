@@ -117,7 +117,7 @@ const char *http_request_headers(int fd)
 {
     static char buf[8192];      /* static variables are not on the stack */
     int i;
-    static char value[512];
+    char value[512];
     char envvar[512];
 
     /* For lab 2: don't remove this line. */
@@ -162,7 +162,7 @@ const char *http_request_headers(int fd)
         /* Some special headers don't use the HTTP_ prefix. */
         if (strcmp(buf, "CONTENT_TYPE") != 0 &&
             strcmp(buf, "CONTENT_LENGTH") != 0) {
-            snprintf(envvar, sizeof(envvar), "HTTP_%s", buf);
+            sprintf(envvar, "HTTP_%s", buf);
             setenv(envvar, value, 1);
         } else {
             setenv(buf, value, 1);
@@ -279,7 +279,7 @@ void http_serve(int fd, const char *name)
     getcwd(pn, sizeof(pn));
     setenv("DOCUMENT_ROOT", pn, 1);
 
-    strncat(pn, name, sizeof(pn) - strlen(pn));
+    strcat(pn, name);
     split_path(pn);
 
     if (!stat(pn, &st))
@@ -350,7 +350,7 @@ void dir_join(char *dst, const char *dirname, const char *filename) {
 void http_serve_directory(int fd, const char *pn) {
     /* for directories, use index.html or similar in that directory */
     static const char * const indices[] = {"index.html", "index.php", "index.cgi", NULL};
-    static char name[1024];
+    char name[1024];
     struct stat st;
     int i;
 
