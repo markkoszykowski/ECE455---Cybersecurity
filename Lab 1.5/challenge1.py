@@ -115,7 +115,7 @@ def hex_to_base64(string):
 def main():
     hex_string = input("Enter hex string to convert to base64: ")
     print(F"base64 string: {hex_to_base64(hex_string)}")
-
+    
 
 if __name__ == "__main__":
     main()
