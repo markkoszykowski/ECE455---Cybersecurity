@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # Mark Koszykowski
 # ECE455 - Cybersecurity
 # Lab 1.5 - Challenge 3
@@ -75,7 +77,7 @@ def try_decode(encoded_string):
 def main():
     encoded = input("Enter encoded hex string: ")
     key, decoded, _ = try_decode(encoded)
-    print(F"Key: {key} ({chr(key)}), Message: {decoded}")
+    print(F"Key: {key} ({chr(key)}), Message: '{decoded.strip()}'")
 
 
 if __name__ == "__main__":

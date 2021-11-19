@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # Mark Koszykowski
 # ECE455 - Cybersecurity
 # Lab 1.5 - Challenge 8
@@ -35,7 +37,7 @@ def main():
 
     print(F"Index of line encrypted with ECB: {line_index+1}")
     print()
-    print(F"Line: {line_index+1}")
+    print("Line:")
     print(lines[line_index])
     print("Repeated bytes:")
     print("{")

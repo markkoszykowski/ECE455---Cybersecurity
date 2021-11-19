@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # Mark Koszykowski
 # ECE455 - Cybersecurity
 # Lab 1.5 - Challenge 4
@@ -24,7 +26,7 @@ def main():
     line, info = find_line(lines)
 
     print(F"Single-character XOR encryption on line: {line}")
-    print(F"Key: {info[0]} ({chr(info[0])}), Message: '{info[1]}'")
+    print(F"Key: {info[0]} ({chr(info[0])}), Message: '{info[1].strip()}'")
 
 
 if __name__ == "__main__":
