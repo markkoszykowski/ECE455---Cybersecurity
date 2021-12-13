@@ -1,3 +1,2 @@
-*.vmdk filter=lfs diff=lfs merge=lfs -text
-*.vmx filter=lfs diff=lfs merge=lfs -text
-*.vmx-e filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.so filter=lfs diff=lfs merge=lfs -text
