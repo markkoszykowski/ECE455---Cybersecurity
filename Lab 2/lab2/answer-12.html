@@ -17,13 +17,8 @@
 	<input type="hidden" name="nexturl" value="http://localhost:8080/zoobar/index.cgi/">
 </form>
 <script>
-	var reg = false;                                                 
-
-	document.getElementsByName("loginform")[0].addEventListener("submit", function(event){submit(event);});
-	document.getElementsByName("submit_registration")[0].addEventListener("click", function(event){reg = true;});
-
+	var reg = false;
 	var click = 1;
-
 
 	function submit(event) {
 		if (click == 1) {
@@ -40,5 +35,8 @@
     			}, 2000);
     		}
     		click = click + 1;
-	}
+	}                                                
+
+	document.getElementsByName("loginform")[0].addEventListener("submit", function(event){submit(event);});
+	document.getElementsByName("submit_registration")[0].addEventListener("click", function(event){reg = true;});
 </script>
