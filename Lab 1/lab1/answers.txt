@@ -1,0 +1,87 @@
+Exercise 2:
+-----------
+
+exploit-2a performs a buffer overflow on the fifth buffer outlined in bugs.txt. Through knowledge of the address of the 
+buffer 'reqpath' and the address of the '%ebp', the return address of the 'process_client' function can be overwritten, 
+pointing it to an out of bounds address resulting in a segmentation fault.
+
+exploit-2b performs a buffer overflow on the third buffer outlined in bugs.txt. Since 'handler' is stored after the buffer 
+'pn' on the stack, through knowledge of the address of the buffer and the address of the variable, the 'handler' variable can 
+be overwritten. Changing this data structure leads to the program eventually pointing to some out of bounds memory address 
+resulting in a segmentation fault.
+
+
+Exercise 3:
+-----------
+
+The other buffer overflow vulernabilities found in bugs.txt were able to be exploited so that remote unwanted actions could 
+be preformed. This is because any vulnerability that allows trivial access to a return address allows a user to guide the 
+flow of the code.
+
+The stack frame after the exploit takes place is shown below.
+
+                                   HIGH ADDR
+                        +----------------------------+
+                        |                            |
+                        |       stack frame of       |
+                        |       process_client's     |
+                        |           caller           |
+                        +----------------------------+
+                        |       return address       | (4 bytes)
+                        | (address of 'reqpath' + 1) |
+                        +----------------------------+
+        %ebp ------>    |         saved %ebp         | (4 bytes)
+                        |           (AAAA)           |
+                        +----------------------------+
+                        |             ...            |
+                        |       (AAAAAA.....)        |
+                        +----------------------------+
+                        |        reqpath[2047]  A    |
+                        |            ...        A    |
+                        |            ...   shellcode |
+                        |          reqpath[0]   /    |
+     reqpath ------>    +----------------------------+
+                        |        other locals        |
+                        |            ...             |
+                        +----------------------------+
+                                  LOW ADDR
+
+
+Exercise 4:
+-----------
+
+All the vulnerabilities found in Exercise 1 can be exploited in this manner. Not only do all of the vulnerabilities rely on 
+the same set of compiler configurations (no address randomization or canaries), but all the vulnerabilities allow attackers 
+access to the return address. Since all the vulnerabilities are for buffers that exist on the stack, the return address is in
+clear reach to an attacker, which is all that is needed to grasp control flow of a program.
+
+
+Exercise 5:
+-----------
+
+An additional vulnerability is found in the 'http_request_line' function of http.c. In this function, the unsafe standard C 
+function 'sprintf' is used twice on lines 94 and 95. These lines store the server protocol and request method which can be 
+controlled by the attacker. In a standard web browser, these vulnerabilities may be difficult to exploit since these 
+variables are quite standard. However, through a custom crafted request, an attacker can use injection instead of stating the
+GET request or HTTP protocol. If the injected code is longer than the length of the buffer that these variables are set to in
+the code, 'envp', the return address can be hijacked. This can be easily prevented by using the safer 'snprintf', which takes
+ in a number of bytes to transfer.
+
+One more vulnerability is in the 'http_serve' function of http.c. In this function, access to any file, directory, or 
+executable can be obtained by an attacker. If the attacker knows the specific location of the object, they can request for it
+ through the URI in the server request. This is a serious security flaw if for example the attacker knows the location of the
+ database files that contain sensitive user logins or information. With that being said though, the attacker would have to 
+know which objects to look for and where they exist. Such a vulnerability can easily be prevented by requiring a certain 
+authorization for specific files, or even more trivially, only allowing access to specific objects that exist on the server.
+
+
+Exercise 6:
+-----------
+
+Changes:
+
+1) char value[512]; => static char value[512];
+2) sprintf(envvar, "HTTP_%s", buf); => snprintf(envvar, sizeof(envvar), "HTTP_%s", buf);
+3) strcat(pn, name); => strncat(pn, name, sizeof(pn) - strlen(pn));
+4) char name[1024]; => static char name[1024];
+5) char reqpath[2048]; => static char reqpath[2048];

